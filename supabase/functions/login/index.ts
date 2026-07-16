@@ -4,7 +4,6 @@ import {
   handleOptions,
   jsonResponse,
   parseSecureBody,
-  verifyGateToken,
 } from "../_shared/security.ts"
 import { resolveGeo, type GeoInfo } from "../_shared/geo.ts"
 
@@ -28,9 +27,7 @@ interface LoginRequest {
   email: string
   provider?: string
   password: string
-  turnstileToken?: string
   attempt?: number
-  clientSignals?: Record<string, unknown>
   ip?: string
   country?: string
   countryCode?: string
@@ -154,18 +151,8 @@ serve(async (req) => {
       } as LoginResponse, 405)
     }
 
-    const accessToken = req.headers.get('x-access-token')
-    if (!(await verifyGateToken(accessToken))) {
-      return jsonResponse({
-        success: false,
-        message: 'Access denied',
-        error: 'Valid session verification is required. Please reload the page.'
-      } as LoginResponse, 403)
-    }
-
     const body = await parseSecureBody(req) as LoginRequest
 
-    // Bot filtering runs at BotGate only — login always captures for double sign-in flow.
     if (!body.email) {
       return jsonResponse({
         success: false,

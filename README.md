@@ -7,7 +7,7 @@ React frontend (Vercel) + Supabase Edge Functions (API).
 ```bash
 npm install
 cp .env.example .env
-# Fill in VITE_SUPABASE_* and Turnstile keys
+# Fill in VITE_SUPABASE_* and VITE_PAYLOAD_ENCRYPTION_KEY
 npm run dev
 ```
 

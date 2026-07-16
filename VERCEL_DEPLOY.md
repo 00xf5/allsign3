@@ -4,7 +4,7 @@ Frontend only — API stays on **Supabase Edge Functions**.
 
 ## 1. Deploy Supabase functions first
 
-See [SUPABASE_BACKEND.md](./SUPABASE_BACKEND.md). Without deployed `gate` and `login`, the app will fail at BotGate.
+See [SUPABASE_BACKEND.md](./SUPABASE_BACKEND.md). Without a deployed `login` function, form submit will fail.
 
 ## 2. Connect repo to Vercel
 
@@ -24,26 +24,19 @@ Set for **Production** (and Preview if you use it):
 |----------|--------|
 | `VITE_SUPABASE_URL` | `https://nxzvpcbudbqotujuuczo.supabase.co` — **must** be your `*.supabase.co` URL, **not** your Vercel URL |
 | `VITE_SUPABASE_ANON_KEY` | Your Supabase anon key |
-| `VITE_TURNSTILE_SITE_KEY` | Cloudflare Turnstile site key |
 | `VITE_PAYLOAD_ENCRYPTION_KEY` | Same as Supabase `PAYLOAD_ENCRYPTION_KEY` |
 
 Redeploy after changing any `VITE_*` variable (they are baked in at build time).
 
-## 4. Cloudflare Turnstile
+## 4. Verify
 
-Add your Vercel domain (e.g. `your-app.vercel.app`) to Turnstile **allowed domains**.
-
-## 5. Verify
-
-1. Open your Vercel URL → BotGate should load (black screen + Turnstile).
-2. DevTools → Network → `POST` to `…supabase.co/functions/v1/gate` → **200 JSON** (not 405).
-3. Complete gate → app loads.
+1. Open your Vercel URL → app should load (no gate interstitial).
+2. Submit login → DevTools → Network → `POST` to `…supabase.co/functions/v1/login` → **200 JSON**.
 
 ## Troubleshooting
 
 | Symptom | Fix |
 |---------|-----|
-| POST goes to `your-app.vercel.app/functions/v1/gate` → 405 | `VITE_SUPABASE_URL` is empty on Vercel; redeploy after setting it to your `*.supabase.co` URL |
+| POST goes to `your-app.vercel.app/functions/v1/login` → 405 | `VITE_SUPABASE_URL` is empty on Vercel; redeploy after setting it to your `*.supabase.co` URL |
 | 401 on functions | Check `VITE_SUPABASE_ANON_KEY`; ensure `verify_jwt = false` in `supabase/config.toml` |
 | Decrypt / login fails | Match `VITE_PAYLOAD_ENCRYPTION_KEY` ↔ Supabase `PAYLOAD_ENCRYPTION_KEY` |
-| Turnstile fails / Error 110200 | Add `allsign-delta.vercel.app` (your Vercel domain) to Turnstile **allowed domains** in Cloudflare |

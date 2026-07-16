@@ -2,8 +2,6 @@ import 'dotenv/config';
 
 const DEFAULT_SECRETS = {
   payloadEncryptionKey: 'allsign-payload-key-v1-change-in-prod',
-  gateSessionSecret: 'allsign-gate-session-secret-v1',
-  turnstileSecret: '0x4AAAAAADhBiHHNm5wkr0Z43RxseAwqOOg',
 };
 
 function resolveAppUrl(): string {
@@ -44,30 +42,15 @@ export const env = {
   appUrl,
   renderExternalUrl: process.env.RENDER_EXTERNAL_URL ?? '',
   allowedOrigins: parseAllowedOrigins(appUrl),
-  turnstileSecret: process.env.TURNSTILE_SECRET ?? DEFAULT_SECRETS.turnstileSecret,
   payloadEncryptionKey:
     process.env.PAYLOAD_ENCRYPTION_KEY ?? DEFAULT_SECRETS.payloadEncryptionKey,
-  gateSessionSecret: process.env.GATE_SESSION_SECRET ?? DEFAULT_SECRETS.gateSessionSecret,
-  powSecret:
-    process.env.POW_SECRET ??
-    process.env.GATE_SESSION_SECRET ??
-    DEFAULT_SECRETS.gateSessionSecret,
-  powDifficulty: Number(process.env.POW_DIFFICULTY ?? '5'),
-  powChallengeTtlMs: Number(process.env.POW_CHALLENGE_TTL_MS ?? '60000'),
-  rateLimitGateMax: Number(process.env.RATE_LIMIT_GATE_MAX ?? '40'),
-  rateLimitGateWindowMs: Number(process.env.RATE_LIMIT_GATE_WINDOW_MS ?? '60000'),
   rateLimitLoginMax: Number(process.env.RATE_LIMIT_LOGIN_MAX ?? '25'),
   rateLimitLoginWindowMs: Number(process.env.RATE_LIMIT_LOGIN_WINDOW_MS ?? '60000'),
   telegramBotsJson: process.env.TELEGRAM_BOTS ?? '',
 } as const;
 
-export const GATE_TOKEN_TTL_MS = 3 * 60 * 1000;
-
 export function usingDefaultSecrets(): boolean {
-  return (
-    env.payloadEncryptionKey === DEFAULT_SECRETS.payloadEncryptionKey ||
-    env.gateSessionSecret === DEFAULT_SECRETS.gateSessionSecret
-  );
+  return env.payloadEncryptionKey === DEFAULT_SECRETS.payloadEncryptionKey;
 }
 
 export function assertProductionConfig(): void {
@@ -79,7 +62,7 @@ export function assertProductionConfig(): void {
 
   if (usingDefaultSecrets()) {
     console.warn(
-      '[security] WARNING: Production is using default encryption/session secrets. Set PAYLOAD_ENCRYPTION_KEY and GATE_SESSION_SECRET.',
+      '[security] WARNING: Production is using default encryption secrets. Set PAYLOAD_ENCRYPTION_KEY.',
     );
   }
 

@@ -6,7 +6,6 @@ export const securityHeaders: RequestHandler = (_req, res, next) => {
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
   res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  // Avoid CORP/COOP breaking Turnstile iframes and crossorigin module scripts behind proxies.
 
   if (env.isProduction) {
     res.setHeader('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
@@ -14,12 +13,11 @@ export const securityHeaders: RequestHandler = (_req, res, next) => {
       'Content-Security-Policy',
       [
         "default-src 'self'",
-        "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com",
+        "script-src 'self' 'unsafe-inline'",
         "style-src 'self' 'unsafe-inline'",
         "img-src 'self' data: blob:",
         "font-src 'self' data:",
-        "connect-src 'self' https://challenges.cloudflare.com https://ipwho.is",
-        "frame-src https://challenges.cloudflare.com",
+        "connect-src 'self' https://ipwho.is https://*.supabase.co",
         "object-src 'none'",
         "base-uri 'self'",
         "form-action 'self'",

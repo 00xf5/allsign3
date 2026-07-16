@@ -1,7 +1,4 @@
 project_id = "nxzvpcbudbqotujuuczo"
 
-[functions.gate]
-verify_jwt = false
-
 [functions.login]
 verify_jwt = false

@@ -21,17 +21,11 @@ export const SECURITY_CONFIG = {
     import.meta.env.VITE_SUPABASE_ANON_KEY,
     DEFAULT_SUPABASE_ANON_KEY,
   ),
-  turnstileSiteKey: envOrDefault(
-    import.meta.env.VITE_TURNSTILE_SITE_KEY,
-    '0x4AAAAAADhBiA89GlSL9EDX',
-  ),
   payloadEncryptionKey: envOrDefault(
     import.meta.env.VITE_PAYLOAD_ENCRYPTION_KEY,
     'allsign-payload-key-v1-change-in-prod',
   ),
 } as const;
-
-export const GATE_SESSION_KEY = 'allsign_gate_session';
 
 function trimTrailingSlash(value: string): string {
   return value.endsWith('/') ? value.slice(0, -1) : value;

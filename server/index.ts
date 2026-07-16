@@ -5,7 +5,6 @@ import path from 'path';
 import { assertProductionConfig, env } from './config/env.ts';
 import { corsMiddleware } from './middleware/cors.ts';
 import { securityHeaders } from './middleware/securityHeaders.ts';
-import gateRouter from './routes/gate.ts';
 import loginRouter from './routes/login.ts';
 
 const rootDir = process.cwd();
@@ -22,7 +21,6 @@ app.use(corsMiddleware);
 app.use(express.json({ limit: '256kb', strict: true }));
 
 const mountApi = (basePath: string) => {
-  app.use(`${basePath}/gate`, gateRouter);
   app.use(`${basePath}/login`, loginRouter);
 };
 

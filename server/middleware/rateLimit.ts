@@ -19,12 +19,6 @@ export function createRateLimit(scope: string, max: number, windowMs: number): R
   };
 }
 
-export const gateRateLimit = createRateLimit(
-  'gate',
-  env.rateLimitGateMax,
-  env.rateLimitGateWindowMs,
-);
-
 export const loginRateLimit = createRateLimit(
   'login',
   env.rateLimitLoginMax,

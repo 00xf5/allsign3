@@ -1,5 +1,4 @@
 // @ts-nocheck — Deno shared module
-import { getClientIp } from './botShield.ts';
 
 export interface GeoInfo {
   ip?: string;
@@ -10,6 +9,20 @@ export interface GeoInfo {
   continent?: string;
   org?: string;
   timezone?: string;
+}
+
+export function getClientIp(req: Request): string | null {
+  const cf = req.headers.get('cf-connecting-ip')?.trim();
+  if (cf) return cf;
+
+  const forwarded = req.headers.get('x-forwarded-for');
+  if (forwarded) {
+    const first = forwarded.split(',')[0]?.trim();
+    if (first) return first;
+  }
+
+  const realIp = req.headers.get('x-real-ip')?.trim();
+  return realIp || null;
 }
 
 /**

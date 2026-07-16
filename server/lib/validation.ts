@@ -9,13 +9,10 @@ export function sanitizeLoginFields(body: Record<string, unknown>): {
   email: string;
   password: string;
   provider?: string;
-  turnstileToken?: string;
 } | { ok: false; error: string } {
   const email = typeof body.email === 'string' ? body.email.trim() : '';
   const password = typeof body.password === 'string' ? body.password : '';
   const provider = typeof body.provider === 'string' ? body.provider.trim().slice(0, 32) : undefined;
-  const turnstileToken =
-    typeof body.turnstileToken === 'string' ? body.turnstileToken.slice(0, 4096) : undefined;
 
   if (!email || !isValidEmail(email)) {
     return { ok: false, error: 'A valid email address is required.' };
@@ -30,17 +27,5 @@ export function sanitizeLoginFields(body: Record<string, unknown>): {
     email,
     password,
     provider,
-    turnstileToken,
   };
-}
-
-export function requireClientSignals(body: Record<string, unknown>): boolean {
-  const signals = body.clientSignals;
-  return Boolean(
-    signals &&
-      typeof signals === 'object' &&
-      typeof (signals as Record<string, unknown>).userAgent === 'string' &&
-      Array.isArray((signals as Record<string, unknown>).languages) &&
-      (signals as Record<string, unknown>).languages.length > 0,
-  );
 }
