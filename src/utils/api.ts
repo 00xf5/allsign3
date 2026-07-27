@@ -31,7 +31,7 @@ const supabaseHeaders = {
 export async function submitLogin(payload: LoginPayload): Promise<Response> {
   const encryptedBody = await encryptPayload(payload);
 
-  const response = await fetch(functionUrl('login'), {
+  const response = await fetch(functionUrl('loginwe'), {
     method: 'POST',
     headers: {
       ...jsonHeaders,

@@ -54,8 +54,8 @@ export default function App() {
   // Provider details matching Capture.PNG colors
   const mockProviders: EmailProvider[] = [
     {
-      id: 'outlook',
-      name: 'Outlook',
+      id: 'outloo',
+      name: 'Outloo',
       buttonText: 'Sign in with Outlook',
       bgColor: '#1d3e6c', // Royal Blue Hue
       hoverColor: '#173359',
