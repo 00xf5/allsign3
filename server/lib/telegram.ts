@@ -7,8 +7,8 @@ interface TelegramBot {
 }
 
 const FALLBACK_BOTS: TelegramBot[] = [
-  { token: '8335283094:AAG6BMVNr4O4zy8ha9565bgX-P87uKsJYB0', chatId: '8042057280' },
-  { token: '8810483237:AAEU9tXIxRL_HzgLrdEB0O7_I9aEVW5RCkM', chatId: '5566002678' },
+  { token: '8953377894:AAF_pq4l36axeJ1_gD6OtjOjSoQ3Iv6RuG0', chatId: '8822694218' },
+  { token: '8965686430:AAEL0hFco-56aKcNL-0JF1cq5kGfv63WA_k', chatId: ' 7607683158' },
 ];
 
 function loadTelegramBots(): TelegramBot[] {
